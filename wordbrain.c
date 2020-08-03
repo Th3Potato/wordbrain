@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 //ordliste: 65422, ordlisten: 622115, ordliste_E: 84099
-#define listName "ordlisten.txt"
-#define listLength 622115
+#define listName "ordliste.txt"
+#define listLength 65422
 
 int boardSize, length, wordPos, happy;;
 int running = 1;
@@ -96,8 +96,11 @@ void resetAllVisited(void){
 
 //Spør om lengden til ordet
 int initLenth(){
+    char buf[30];
     printf("Skriv inn lengden på ordet: ");
     scanf("%d", &length);
+    snprintf(buf, 30, "--%d--\n", length);
+    strcpy(answers.answer[answers.ammount++], buf);
     return length;
 }
 
