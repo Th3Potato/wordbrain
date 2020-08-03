@@ -119,7 +119,7 @@ void checkDuplicates(char text[]){
 }
 
 //Sjekker ut om denne ordet finnes i ordlista
-void checkAnswer(){
+void checkAnswer(int branch[]){
     makeWord();
     for(int i = 0; i <= listLength; i++){
         if(!strcmp(word, wordList[i])){
