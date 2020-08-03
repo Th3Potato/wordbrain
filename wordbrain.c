@@ -9,7 +9,7 @@
 int boardSize, length, wordPos, happy;;
 int running = 1;
 int branch[255];
-char tjuesju = 'æ'; char tjueatte = 'ø'; char tjueni = 'å';
+//char tjuesju = 'æ'; char tjueatte = 'ø'; char tjueni = 'å';
 char word[255], wordList[listLength][255];
 
 typedef struct{
@@ -53,15 +53,15 @@ void makeList(void){
 
     board = malloc(sizeof(cell)*boardSize*boardSize);
 
-    /*
+    
     //Skriv inn hele ordkartet
     printf("Skriv inn hele ordetkartet i en string: \n");
     scanf("%s", line);
     for(int i = 0; i < (boardSize*boardSize); ++i){
         board[i].letter = line[i];
     }
-    */
     
+    /*
     //Skriv inn bokstav for bokstav
     for(int i = 0; i < (boardSize*boardSize); ++i){
         printf("Skriv inn bokstav på: x = %d, y = %d\n", i%boardSize, i/boardSize);
@@ -79,7 +79,7 @@ void makeList(void){
             board[i].letter = line[0];
             }
     }  
-    
+    */
 }
 
 //Gjør koordinat i bestemt pos om til visited = 0
