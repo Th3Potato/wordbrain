@@ -6,10 +6,9 @@
 #define listName "ordliste.txt"
 #define listLength 65422
 
-int boardSize, length, wordPos, happy;;
+int boardSize, length, wordPos, happy, funn;
 int running = 1;
 int branch[255];
-//char tjuesju = 'æ'; char tjueatte = 'ø'; char tjueni = 'å';
 char word[255], wordList[listLength][255];
 
 typedef struct{
@@ -25,6 +24,32 @@ typedef struct{
 cell* board;
 answerList answers;
 
+char* translate(char letter){
+    char *newLetter;
+
+    newLetter = malloc(sizeof(char)*2);
+    memset(newLetter, 0, sizeof(newLetter));
+
+    switch(letter){
+        case '1':
+            newLetter[0] = 195;
+            newLetter[1] = 166;
+            return newLetter;
+        case '2':
+            newLetter[0] = 195;
+            newLetter[1] = 184;
+            return newLetter;
+        case '3':
+            newLetter[0] = 195;
+            newLetter[1] = 165;
+            return newLetter;
+        default:
+            free(newLetter);
+            return NULL;
+    }
+}
+
+
 //åpner ordlista og fyller inn hvert ord i en 2-dimensjonal liste
 void readTXT(void){
     FILE* fp = fopen(listName, "r");
@@ -39,41 +64,44 @@ void readTXT(void){
     fclose(fp);
 }
 
-void writeTXT(void){
-    FILE* fp = fopen("ordlisten.txt", "a");
-
-    fclose(fp);
-}
-
 //Lager et rutenett utifra gitt dimensjoner
 void makeList(void){
     printf("Skriv inn dimmensjonene på rutenettet: ");
     scanf("%d", &boardSize);
-    char line[100];
 
     board = malloc(sizeof(cell)*boardSize*boardSize);
 
-    
     //Skriv inn hele ordkartet
+    char line[255];
     printf("Skriv inn hele ordetkartet i en string: \n");
     scanf("%s", line);
+    int pos = 0;
+    while(line[pos]){
+        if(line[pos-1] == 195){
+            if(line[pos] = 166){line[--pos] = '1';}
+            if(line[pos] = 184){line[--pos] = '2';}
+            if(line[pos] = 165){line[--pos] = '3';}
+        }
+        pos++;
+    }
+
     for(int i = 0; i < (boardSize*boardSize); ++i){
         board[i].letter = line[i];
-    }
-    
+    }   
+
     /*
     //Skriv inn bokstav for bokstav
     for(int i = 0; i < (boardSize*boardSize); ++i){
         printf("Skriv inn bokstav på: x = %d, y = %d\n", i%boardSize, i/boardSize);
         scanf("%s", line);
         if(!strcmp(line, "tjuesju")){
-            board[i].letter = tjuesju;
+            board[i].letter = tjuesju[i];
         }
         else if(!strcmp(line, "tjueatte")){
-            board[i].letter = tjueatte;
+            board[i].letter = tjueatte[i];
         }
         else if(!strcmp(line, "tjueni")){
-            board[i].letter = tjueni;
+            board[i].letter = tjueni[i];
         }
         else{
             board[i].letter = line[0];
@@ -82,7 +110,7 @@ void makeList(void){
     */
 }
 
-//Gjør koordinat i bestemt pos om til visited = 0
+//Gjør koordinat i bestemt koor om til visited = 0
 void resetVisited(int cor){
     board[cor].visited = 0;
 }
@@ -106,11 +134,24 @@ int initLenth(){
 
 //Lager ordet utifra koordinatene
 void makeWord(){
-    for(int i = 0; i < length; i++){
-        word[i] = board[branch[i]].letter;
+    int i = 0; //posisjonen i ordet(påvirket av æøå)
+    int j = 0; //orginale posisjonen
+    int wordLength = length;
+    for(; i < wordLength; i++){
+        if(translate(board[branch[j]].letter) != NULL){
+            char* newLetter = translate(board[branch[j]].letter);
+            word[i] = newLetter[0];
+            wordLength++;i++;
+            word[i] = newLetter[1];
+        }else{
+            word[i] = board[branch[j]].letter;
+        }
+        j++;
     }
-    word[length] = '\n';
+    word[wordLength] = '\n';
+    word[wordLength+1] = '\0';
     //printf("%s", word);
+    //length -= (i-j);
 }
 
 void checkDuplicates(char text[]){
@@ -122,10 +163,12 @@ void checkDuplicates(char text[]){
 }
 
 //Sjekker ut om denne ordet finnes i ordlista
-void checkAnswer(int branch[]){
+void checkAnswer(void){
     makeWord();
+    //printf("ord: %s\n", word);
     for(int i = 0; i <= listLength; i++){
         if(!strcmp(word, wordList[i])){
+            funn++;
             //printf("Forslag til ord: %s\n", word);
             checkDuplicates(word);
             break;
@@ -141,7 +184,7 @@ void getLetter(int pos, char word[]){
     board[pos].visited = 1;
     //sjekker om ordet passer
     if(wordPos == length){
-        checkAnswer(branch);
+        checkAnswer();
     }
 
     while(y < 2){   
@@ -169,9 +212,16 @@ void getLetter(int pos, char word[]){
 
 //printer ut koordinatsystemet
 void printBoard(void){
-        for(int i = 0; i < (boardSize*boardSize); ++i){
+    for(int i = 0; i < (boardSize*boardSize); ++i){
         if(!(i%boardSize)) {printf("\n");}
-        printf("%c ", board[i].letter);
+        //printf("%c ", board[i].letter);
+        
+        if(translate(board[i].letter) == NULL){
+            printf("%c ", board[i].letter);
+        }else{
+            printf("%s ", translate(board[i].letter));
+        }
+        
     }
     printf("\n\n");
 }
@@ -200,6 +250,7 @@ int main(void){
 
         if(answers.ammount){
             printAnswers();
+            //printf("Antall forslag: %d\n", funn);
             printf("\nEr du fornøyd med ordene du fikk? (0/1) ");
             scanf("%d", &happy);
             if(happy){
