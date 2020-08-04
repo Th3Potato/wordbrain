@@ -76,11 +76,14 @@ void makeList(void){
     printf("Skriv inn hele ordetkartet i en string: \n");
     scanf("%s", line);
     int pos = 0;
+    int counter = 0;
     while(line[pos]){
         if(line[pos-1] == 195){
-            if(line[pos] = 166){line[--pos] = '1';}
-            if(line[pos] = 184){line[--pos] = '2';}
-            if(line[pos] = 165){line[--pos] = '3';}
+            if(line[pos] == 166){line[--pos] = '1';counter++;}
+            if(line[pos] == 184){line[--pos] = '2';counter++;}
+            if(line[pos] == 165){line[--pos] = '3';counter++;}
+        }else{
+            line[pos] = line[pos+counter];
         }
         pos++;
     }
