@@ -24,11 +24,12 @@ typedef struct{
 cell* board;
 answerList answers;
 
+//gjør om '1', '2', '3' til 'æ', 'ø', 'å'
 char* translate(char letter){
     char *newLetter;
 
     newLetter = malloc(sizeof(char)*2);
-    memset(newLetter, 0, sizeof(newLetter));
+    memset(newLetter, 0, 3);
 
     switch(letter){
         case '1':
@@ -75,9 +76,8 @@ void makeList(void){
     char line[255];
     printf("Skriv inn hele ordetkartet i en string: \n");
     scanf("%s", line);
-    int pos = 0;
     int counter = 0;
-    while(line[pos]){
+    for(int pos = 0; pos <= strlen(line); pos++){
         if(line[pos-1] == 195){
             if(line[pos] == 166){line[--pos] = '1';counter++;}
             if(line[pos] == 184){line[--pos] = '2';counter++;}
@@ -85,7 +85,7 @@ void makeList(void){
         }else{
             line[pos] = line[pos+counter];
         }
-        pos++;
+    
     }
 
     for(int i = 0; i < (boardSize*boardSize); ++i){
@@ -97,18 +97,7 @@ void makeList(void){
     for(int i = 0; i < (boardSize*boardSize); ++i){
         printf("Skriv inn bokstav på: x = %d, y = %d\n", i%boardSize, i/boardSize);
         scanf("%s", line);
-        if(!strcmp(line, "tjuesju")){
-            board[i].letter = tjuesju[i];
-        }
-        else if(!strcmp(line, "tjueatte")){
-            board[i].letter = tjueatte[i];
-        }
-        else if(!strcmp(line, "tjueni")){
-            board[i].letter = tjueni[i];
-        }
-        else{
-            board[i].letter = line[0];
-            }
+        board[i].letter = line[0];
     }  
     */
 }
@@ -157,12 +146,14 @@ void makeWord(){
     //length -= (i-j);
 }
 
+//Sjekker om ordet allerede finnes, ellers legger til i lista
 void checkDuplicates(char text[]){
     for(int i = 0; i < answers.ammount; i++){
         if(!strcmp(text, answers.answer[i]))
             return;
     }
     strcpy(answers.answer[answers.ammount++], text);
+    printf("%s", text);
 }
 
 //Sjekker ut om denne ordet finnes i ordlista
@@ -179,6 +170,10 @@ void checkAnswer(void){
     }
 }
 
+/*
+HOVEDALGORITMEN - slår sammen bokstav i et punkt med
+alle mulige alternativer. Kaller seg selv med det nye ordet
+*/
 void getLetter(int pos, char word[]){
     int x = -1;
     int y = -1;
@@ -229,6 +224,7 @@ void printBoard(void){
     printf("\n\n");
 }
 
+//printer ut alle svarene
 void printAnswers(void){
     for(int i = 0; i < answers.ammount; i++){
         printf("%s", answers.answer[i]);
@@ -252,15 +248,13 @@ int main(void){
         }   
 
         if(answers.ammount){
-            printAnswers();
+            //printAnswers();
             //printf("Antall forslag: %d\n", funn);
             printf("\nEr du fornøyd med ordene du fikk? (0/1) ");
             scanf("%d", &happy);
             if(happy){
                 running = 0;
             }
-        }else{
-            printf("Fant ingen ord. Prøv på nytt.\n");
         }
     }
     
