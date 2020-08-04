@@ -2,9 +2,20 @@
 #include <string.h>
 #include <stdlib.h>
 
-//ordliste: 65422, ordlisten: 622115, ordliste_E: 84099
+#ifdef LITEN 
 #define listName "ordliste.txt"
 #define listLength 65422
+#endif
+
+#ifdef STOR 
+#define listName "ordlisten.txt"
+#define listLength 622115
+#endif
+
+#ifdef ENG 
+#define listName "ordliste_E.txt"
+#define listLength 84099
+#endif
 
 int boardSize, length, wordPos, happy, funn;
 int running = 1;
