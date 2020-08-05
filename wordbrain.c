@@ -20,7 +20,9 @@
 int boardSize, length, wordPos, happy, funn;
 int running = 1;
 int branch[255];
-char word[255], wordList[listLength][255];
+char word[255]; 
+char wordList[37337][255];
+//char wordList[10][listLength][255];
 
 typedef struct{
     int visited;
@@ -61,14 +63,30 @@ char* translate(char letter){
     }
 }
 
+int lengthCheck(char word[]){
+    int checkLength = 0;
+    for(int pos = 0; pos < strlen(word); pos++){
+        if((unsigned char) word[pos-1] == 195){
+            checkLength--;
+        }
+        checkLength++;
+    }
+    checkLength--;
+    //printf("lengde: %d\n", checkLength);
+    return checkLength;
+}
 
 //åpner ordlista og fyller inn hvert ord i en 2-dimensjonal liste
-void readTXT(void){
-    FILE* fp = fopen(listName, "r");
+void readTXT(char filename[]){
+    FILE* fp = fopen(filename, "r");
+    if(!fp){
+        printf("Klarte ikke å hente fil. %s\n", filename);
+    }
     char line[255];
     int i = 0;
 
     while (fgets(line, sizeof(line), fp) != NULL) {
+        //printf("%s\n", line);
         strcpy(wordList[i], line);
         i++;
     }
@@ -130,8 +148,18 @@ int initLenth(){
     char buf[30];
     printf("Skriv inn lengden på ordet: ");
     scanf("%d", &length);
+
+    char buffer[10];
+    if(length >= 10){
+        snprintf(buffer, 10, "%d%s.txt", length, "word");
+    }else{
+        buffer = "word.txt";
+    }
+    readTXT(buffer);
+            
     snprintf(buf, 30, "--%d--\n", length);
     strcpy(answers.answer[answers.ammount++], buf);
+
     return length;
 }
 
@@ -171,7 +199,7 @@ void checkDuplicates(char text[]){
 void checkAnswer(void){
     makeWord();
     //printf("ord: %s\n", word);
-    for(int i = 0; i <= listLength; i++){
+    for(int i = 0; i <= 37337; i++){
         if(!strcmp(word, wordList[i])){
             funn++;
             //printf("Forslag til ord: %s\n", word);
@@ -244,7 +272,7 @@ void printAnswers(void){
 
 int main(void){
     answers.ammount = 0;
-    readTXT();
+    //readTXT();
     makeList();
     while(running){
         resetAllVisited();
