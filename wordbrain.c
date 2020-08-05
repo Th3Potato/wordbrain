@@ -17,12 +17,11 @@
 #define listLength 84099
 #endif
 
-int boardSize, length, wordPos, happy, funn;
+int boardSize, length, wordAmmount, wordPos, happy, funn;
 int running = 1;
 int branch[255];
 char word[255]; 
-char wordList[37337][255];
-//char wordList[10][listLength][255];
+char wordList[59492][255];
 
 typedef struct{
     int visited;
@@ -152,8 +151,10 @@ int initLenth(){
     char buffer[10];
     if(length < 10){
         snprintf(buffer, 10, "%d%s.txt", length, "word");
+        wordAmmount = 59492;
     }else{
         strcpy(buffer, "word.txt");
+        wordAmmount = 421553;
     }
     readTXT(buffer);
             
@@ -199,7 +200,7 @@ void checkDuplicates(char text[]){
 void checkAnswer(void){
     makeWord();
     //printf("ord: %s\n", word);
-    for(int i = 0; i <= 37337; i++){
+    for(int i = 0; i <= wordAmmount; i++){
         if(!strcmp(word, wordList[i])){
             funn++;
             //printf("Forslag til ord: %s\n", word);
