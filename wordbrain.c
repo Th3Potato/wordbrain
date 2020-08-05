@@ -106,10 +106,10 @@ void makeList(void){
     scanf("%s", line);
     int counter = 0;
     for(int pos = 0; pos <= strlen(line); pos++){
-        if(line[pos-1] == 195){
-            if(line[pos] == 166){line[--pos] = '1';counter++;}
-            if(line[pos] == 184){line[--pos] = '2';counter++;}
-            if(line[pos] == 165){line[--pos] = '3';counter++;}
+        if((unsigned char) line[pos-1] == 195){
+            if((unsigned char) line[pos] == 166){line[--pos] = '1';counter++;}
+            if((unsigned char) line[pos] == 184){line[--pos] = '2';counter++;}
+            if((unsigned char) line[pos] == 165){line[--pos] = '3';counter++;}
         }else{
             line[pos] = line[pos+counter];
         }
