@@ -153,7 +153,7 @@ int initLenth(){
     if(length >= 10){
         snprintf(buffer, 10, "%d%s.txt", length, "word");
     }else{
-        buffer = "word.txt";
+        strcpy(buffer, "word.txt");
     }
     readTXT(buffer);
             
