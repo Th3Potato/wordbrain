@@ -150,7 +150,7 @@ int initLenth(){
     scanf("%d", &length);
 
     char buffer[10];
-    if(length >= 10){
+    if(length < 10){
         snprintf(buffer, 10, "%d%s.txt", length, "word");
     }else{
         strcpy(buffer, "word.txt");
