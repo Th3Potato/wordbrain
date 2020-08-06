@@ -107,9 +107,9 @@ void makeList(void){
     int counter = 0;
     for(int pos = 0; pos <= strlen(line); pos++){
         if((unsigned char) line[pos-1] == 195){
-            if((unsigned char) line[pos] == 166){line[--pos] = '1';counter++;}
-            if((unsigned char) line[pos] == 184){line[--pos] = '2';counter++;}
-            if((unsigned char) line[pos] == 165){line[--pos] = '3';counter++;}
+            if((unsigned char) line[pos+counter] == 166){line[--pos] = '1';counter++;}
+            if((unsigned char) line[pos+counter] == 184){line[--pos] = '2';counter++;}
+            if((unsigned char) line[pos+counter] == 165){line[--pos] = '3';counter++;}
         }else{
             line[pos] = line[pos+counter];
         }
