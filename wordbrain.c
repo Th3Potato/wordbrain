@@ -1,27 +1,10 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
-#ifdef LITEN 
-#define listName "ordliste.txt"
-#define listLength 65422
-#endif
-
-#ifdef STOR 
-#define listName "ordlisten.txt"
-#define listLength 622115
-#endif
-
-#ifdef ENG 
-#define listName "ordliste_E.txt"
-#define listLength 84099
-#endif
+#include "trie.h"
 
 int boardSize, length, wordAmmount, wordPos, happy, funn;
 int running = 1;
 int branch[255];
 char word[255]; 
-char wordList[59492][255];
+node root = {'\0', NULL, 0};
 
 typedef struct{
     int visited;
@@ -62,6 +45,7 @@ char* translate(char letter){
     }
 }
 
+//Sjekker ut faktisk lengde(med æøå)
 int lengthCheck(char word[]){
     int checkLength = 0;
     for(int pos = 0; pos < strlen(word); pos++){
@@ -82,12 +66,11 @@ void readTXT(char filename[]){
         printf("Klarte ikke å hente fil. %s\n", filename);
     }
     char line[255];
-    int i = 0;
 
     while (fgets(line, sizeof(line), fp) != NULL) {
-        //printf("%s\n", line);
-        strcpy(wordList[i], line);
-        i++;
+        line[(strlen(line)-1)] = '\0';
+        addWord(&root, line);
+        //printf("Lagt til: %s\n", line);
     }
 
     fclose(fp);
@@ -147,16 +130,6 @@ int initLenth(){
     char buf[30];
     printf("Skriv inn lengden på ordet: ");
     scanf("%d", &length);
-
-    char buffer[10];
-    if(length < 10){
-        snprintf(buffer, 10, "%d%s.txt", length, "word");
-        wordAmmount = 59492;
-    }else{
-        strcpy(buffer, "word.txt");
-        wordAmmount = 421553;
-    }
-    readTXT(buffer);
             
     snprintf(buf, 30, "--%d--\n", length);
     strcpy(answers.answer[answers.ammount++], buf);
@@ -180,8 +153,7 @@ void makeWord(){
         }
         j++;
     }
-    word[wordLength] = '\n';
-    word[wordLength+1] = '\0';
+    word[wordLength] = '\0';
     //printf("%s", word);
     //length -= (i-j);
 }
@@ -193,21 +165,17 @@ void checkDuplicates(char text[]){
             return;
     }
     strcpy(answers.answer[answers.ammount++], text);
-    printf("%s", text);
+    printf("%s\n", text);
 }
 
 //Sjekker ut om denne ordet finnes i ordlista
 void checkAnswer(void){
     makeWord();
+    //printf("sjekker ord: %s %d\n", word, checkWord(&root, word));
+    if(!checkWord(&root, word))
+        checkDuplicates(word);
+
     //printf("ord: %s\n", word);
-    for(int i = 0; i <= wordAmmount; i++){
-        if(!strcmp(word, wordList[i])){
-            funn++;
-            //printf("Forslag til ord: %s\n", word);
-            checkDuplicates(word);
-            break;
-        }
-    }
 }
 
 /*
@@ -273,7 +241,7 @@ void printAnswers(void){
 
 int main(void){
     answers.ammount = 0;
-    //readTXT();
+    readTXT("ordliste.txt");
     makeList();
     while(running){
         resetAllVisited();
