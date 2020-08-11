@@ -241,7 +241,7 @@ void printAnswers(void){
 
 int main(void){
     answers.ammount = 0;
-    readTXT("ordliste.txt");
+    readTXT("ordlisten.txt");
     makeList();
     while(running){
         resetAllVisited();
