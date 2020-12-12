@@ -78,7 +78,7 @@ void AddMenus(HWND hWnd){
     HMENU hFileMenu = CreateMenu();
 
     AppendMenu(hFileMenu, MF_STRING, FILE_MENU_ENTER, "Enter");
-    AppendMenu(hFileMenu, MF_STRING, FILE_MENU_RESET, "Reset");
+    AppendMenu(hFileMenu, MF_STRING, FILE_MENU_RESET, "Clear");
     AppendMenu(hFileMenu, MF_SEPARATOR, 0, NULL); 
     AppendMenu(hFileMenu, MF_STRING, FILE_MENU_EXIT, "Exit");
 
@@ -101,7 +101,8 @@ void AddControls(HWND hWnd){
     CreateWindowW(L"Static", L"Length of Word: ", WS_VISIBLE | WS_CHILD, 100, 130, 98, 38, hWnd, NULL, NULL, NULL);
     hLength = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_AUTOHSCROLL | WS_BORDER, 200, 130, 148, 38, hWnd, NULL, NULL, NULL);
 
-    CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD, 200, 180, 75, 50, hWnd, (HMENU) FILE_MENU_ENTER, NULL, NULL);
+    CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD, 150, 180, 75, 50, hWnd, (HMENU) FILE_MENU_ENTER, NULL, NULL);
+    CreateWindowW(L"Button", L"Clear", WS_VISIBLE | WS_CHILD, 250, 180, 75, 50, hWnd, (HMENU) FILE_MENU_RESET, NULL, NULL);
     
 
 }
