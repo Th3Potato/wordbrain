@@ -1,9 +1,10 @@
-#include "trie.h"
+#include "wordbrain.h"
 
-int boardSize, length, wordAmmount, wordPos, happy, funn;
+int boardSize, wordAmmount, wordPos, happy, funn;
+static int length = 0;
 int running = 1;
 int branch[255];
-char word[255]; 
+char word[255], line[255]; 
 node root = {'\0', NULL, 0};
 
 typedef struct{
@@ -20,7 +21,7 @@ cell* board;
 answerList answers;
 
 //gjør om '1', '2', '3' til 'æ', 'ø', 'å'
-char* translate(char letter){
+static char* translate(char letter){
     char *newLetter;
 
     newLetter = malloc(sizeof(char)*2);
@@ -46,7 +47,7 @@ char* translate(char letter){
 }
 
 //Sjekker ut faktisk lengde(med æøå)
-int lengthCheck(char word[]){
+static int lengthCheck(char word[]){
     int checkLength = 0;
     for(int pos = 0; pos < strlen(word); pos++){
         if((unsigned char) word[pos-1] == 195){
@@ -60,7 +61,7 @@ int lengthCheck(char word[]){
 }
 
 //åpner ordlista og fyller inn hvert ord i en 2-dimensjonal liste
-void readTXT(char filename[]){
+static void readTXT(char filename[]){
     FILE* fp = fopen(filename, "r");
     if(!fp){
         printf("Klarte ikke å hente fil. %s\n", filename);
@@ -77,16 +78,10 @@ void readTXT(char filename[]){
 }
 
 //Lager et rutenett utifra gitt dimensjoner
-void makeList(void){
-    printf("Skriv inn dimmensjonene på rutenettet: ");
-    scanf("%d", &boardSize);
-
+static void makeList(){
     board = malloc(sizeof(cell)*boardSize*boardSize);
 
     //Skriv inn hele ordkartet
-    char line[255];
-    printf("Skriv inn hele ordetkartet i en string: \n");
-    scanf("%s", line);
     int counter = 0;
     for(int pos = 0; pos <= strlen(line); pos++){
         if((unsigned char) line[pos-1] == 195){
@@ -114,19 +109,20 @@ void makeList(void){
 }
 
 //Gjør koordinat i bestemt koor om til visited = 0
-void resetVisited(int cor){
+static void resetVisited(int cor){
     board[cor].visited = 0;
 }
 
 //Gjør alle koordinatene om til visited = 0
-void resetAllVisited(void){
+static void resetAllVisited(void){
     for(int i = 0; i < (boardSize*boardSize); i++){
         resetVisited(i);
     }
 }
 
+/*
 //Spør om lengden til ordet
-int initLenth(){
+static int initLenth(){
     char buf[30];
     printf("Skriv inn lengden på ordet: ");
     scanf("%d", &length);
@@ -136,9 +132,10 @@ int initLenth(){
 
     return length;
 }
+*/
 
 //Lager ordet utifra koordinatene
-void makeWord(){
+static void makeWord(){
     int i = 0; //posisjonen i ordet(påvirket av æøå)
     int j = 0; //orginale posisjonen
     int wordLength = length;
@@ -159,17 +156,21 @@ void makeWord(){
 }
 
 //Sjekker om ordet allerede finnes, ellers legger til i lista
-void checkDuplicates(char text[]){
+static void checkDuplicates(char text[]){
     for(int i = 0; i < answers.ammount; i++){
         if(!strcmp(text, answers.answer[i]))
             return;
     }
     strcpy(answers.answer[answers.ammount++], text);
-    printf("%s\n", text);
+    
+    strcpy(&allWords[strlen(allWords)], text);
+    allWords[strlen(allWords)] = '\n';
+    //strcpy(allWords, "ape\nape\nape\n");
+    //printf("%s\n", text);
 }
 
 //Sjekker ut om denne ordet finnes i ordlista
-void checkAnswer(void){
+static void checkAnswer(void){
     makeWord();
     //printf("sjekker ord: %s %d\n", word, checkWord(&root, word));
     if(!checkWord(&root, word))
@@ -182,7 +183,7 @@ void checkAnswer(void){
 HOVEDALGORITMEN - slår sammen bokstav i et punkt med
 alle mulige alternativer. Kaller seg selv med det nye ordet
 */
-void getLetter(int pos, char word[]){
+static void getLetter(int pos, char word[]){
     int x = -1;
     int y = -1;
     int newPos = pos;
@@ -217,7 +218,7 @@ void getLetter(int pos, char word[]){
 }
 
 //printer ut koordinatsystemet
-void printBoard(void){
+static void printBoard(void){
     for(int i = 0; i < (boardSize*boardSize); ++i){
         if(!(i%boardSize)) {printf("\n");}
         //printf("%c ", board[i].letter);
@@ -233,38 +234,29 @@ void printBoard(void){
 }
 
 //printer ut alle svarene
-void printAnswers(void){
+static void printAnswers(void){
     for(int i = 0; i < answers.ammount; i++){
         printf("%s", answers.answer[i]);
     }
 }
 
-int main(void){
+void solvePuzzle(int bSize, char* myWord, int wordLength){
+    length = wordLength;
+    boardSize = bSize;
+    strcpy(line, myWord);
+
     answers.ammount = 0;
     readTXT("ordlisten.txt");
     makeList();
-    while(running){
-        resetAllVisited();
-        printBoard();
-        initLenth();
-        for(int i = 0; i < (boardSize*boardSize); ++i){
-            wordPos = 1;
-            branch[0] = i;
-            //printf("Start: %d, bokstav: %c\n", i, board[i].letter);
-            getLetter(i, word);
-            resetAllVisited();
-        }   
 
-        if(answers.ammount){
-            //printAnswers();
-            //printf("Antall forslag: %d\n", funn);
-            printf("\nEr du fornøyd med ordene du fikk? (0/1) ");
-            scanf("%d", &happy);
-            if(happy){
-                running = 0;
-            }
-        }
-    }
+    resetAllVisited();
+    //printBoard();
+    for(int i = 0; i < (boardSize*boardSize); ++i){
+        wordPos = 1;
+        branch[0] = i;
+        //printf("Start: %d, bokstav: %c\n", i, board[i].letter);
+        getLetter(i, word);
+        resetAllVisited();
+    }   
     
-    return 0;
 }
