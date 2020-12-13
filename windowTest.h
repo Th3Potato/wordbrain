@@ -5,10 +5,12 @@
 #include <windows.h>
 
 HMENU hMenu;
-HWND hSize, hString, hLength, hOut;
+HWND hString, hLength, hOut;
 
-wchar_t lSize[255], lString[255], lLength[255], lOut[255];
-int sSize, sLength;
+SCROLLINFO si;
+
+wchar_t lString[255], lLength[255], lOut[255];
+int sLength;
 char sString[255], sOut[255];
 
 int createWindow(HINSTANCE, HINSTANCE, LPSTR, int);

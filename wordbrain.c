@@ -240,9 +240,9 @@ static void printAnswers(void){
     }
 }
 
-void solvePuzzle(int bSize, char* myWord, int wordLength){
+void solvePuzzle(char* myWord, int wordLength){
     length = wordLength;
-    boardSize = bSize;
+    boardSize = sqrt(strlen(myWord));
     strcpy(line, myWord);
 
     answers.ammount = 0;

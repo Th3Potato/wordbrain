@@ -19,7 +19,7 @@ int main(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdshow){
     if(!RegisterClassW(&wc)){
         return -1;
     }
-    CreateWindowW(L"myWindowClass", L"WordSolver", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 750, 225, 500, 725, NULL, NULL, NULL, NULL);
+    CreateWindowW(L"myWindowClass", L"WordSolver", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 750, 175, 500, 775, NULL, NULL, NULL, NULL);
 
     MSG msg = {0};
     
@@ -44,14 +44,16 @@ LRESULT CALLBACK WindowsProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){
                     break;
                 case FILE_MENU_RESET:
                     memset(allWords, 0, sizeof(char)*9999);
-                    hOut = CreateWindowW(L"Static", L"", WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL | WS_BORDER, 150, 240, 200, 750, hWnd, NULL, NULL, NULL);
+                    hOut = CreateWindowW(L"Static", L"", WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL | WS_BORDER, 150, 200, 200, 500, hWnd, NULL, NULL, NULL);
+                    //SetScrollInfo(hOut, SB_VERT, &si, TRUE);
                     break;
                 case FILE_MENU_ENTER:
                     getText();
-                    solvePuzzle(sSize, sString, sLength);
+                    solvePuzzle(sString, sLength);
                     mbstowcs_s(NULL, lOut, strlen(allWords)+1, allWords, strlen(allWords));
                     //printf("%s\n", allWords);
-                    hOut = CreateWindowW(L"Static", lOut, WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL | WS_BORDER, 150, 240, 200, 750, hWnd, NULL, NULL, NULL);
+                    hOut = CreateWindowW(L"Static", lOut, WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL | WS_BORDER, 150, 200, 200, 500, hWnd, NULL, NULL, NULL);
+                    //SetScrollInfo(hOut, SB_VERT, &si, TRUE);
                     break;
             }
             break;
@@ -61,6 +63,19 @@ LRESULT CALLBACK WindowsProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){
             AddControls(hWnd);
             break;
         
+        case WM_VSCROLL:
+            si.cbSize = sizeof(si);
+            GetScrollInfo(hOut, SB_VERT, &si);
+            switch(LOWORD(wp)){
+                case SB_LINEDOWN:
+                    si.nPos += 5;
+                    break;
+                case SB_LINEUP:
+                    si.nPos -= 5;
+                    break;
+            }
+            //SetScrollInfo(hOut, SB_VERT, &si, TRUE);
+
         case WM_DESTROY:
             PostQuitMessage(0);
             break;
@@ -68,8 +83,6 @@ LRESULT CALLBACK WindowsProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp){
         default:
                 return DefWindowProcW(hWnd, msg, wp, lp);
     }
-
-
 }
 
 void AddMenus(HWND hWnd){
@@ -89,31 +102,33 @@ void AddMenus(HWND hWnd){
 
 void AddControls(HWND hWnd){
 
-    //Size
-    CreateWindowW(L"Static", L"Enter Size: ", WS_VISIBLE | WS_CHILD, 100, 50, 98, 38, hWnd, NULL, NULL, NULL);
-    hSize = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_AUTOHSCROLL | WS_BORDER, 200, 50, 148, 38, hWnd, NULL, NULL, NULL);
-
     //Stringmap
-    CreateWindowW(L"Static", L"Enter String: ", WS_VISIBLE | WS_CHILD, 100, 90, 98, 38, hWnd, NULL, NULL, NULL);
-    hString = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_AUTOHSCROLL | WS_BORDER, 200, 90, 148, 38, hWnd, NULL, NULL, NULL);
+    CreateWindowW(L"Static", L"Enter Stringmap: ", WS_VISIBLE | WS_CHILD, 100, 50, 98, 38, hWnd, NULL, NULL, NULL);
+    hString = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_AUTOHSCROLL | WS_BORDER, 200, 50, 148, 38, hWnd, NULL, NULL, NULL);
 
     //Length of word
-    CreateWindowW(L"Static", L"Length of Word: ", WS_VISIBLE | WS_CHILD, 100, 130, 98, 38, hWnd, NULL, NULL, NULL);
-    hLength = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_AUTOHSCROLL | WS_BORDER, 200, 130, 148, 38, hWnd, NULL, NULL, NULL);
+    CreateWindowW(L"Static", L"Length of Word: ", WS_VISIBLE | WS_CHILD, 100, 90, 98, 38, hWnd, NULL, NULL, NULL);
+    hLength = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | ES_MULTILINE | ES_AUTOHSCROLL | WS_BORDER, 200, 90, 148, 38, hWnd, NULL, NULL, NULL);
 
-    CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD, 150, 180, 75, 50, hWnd, (HMENU) FILE_MENU_ENTER, NULL, NULL);
-    CreateWindowW(L"Button", L"Clear", WS_VISIBLE | WS_CHILD, 250, 180, 75, 50, hWnd, (HMENU) FILE_MENU_RESET, NULL, NULL);
-    
+    CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD, 150, 140, 75, 50, hWnd, (HMENU) FILE_MENU_ENTER, NULL, NULL);
+    CreateWindowW(L"Button", L"Clear", WS_VISIBLE | WS_CHILD, 250, 140, 75, 50, hWnd, (HMENU) FILE_MENU_RESET, NULL, NULL);
+
+    si.cbSize = sizeof(si);
+    si.nPos = 0;
+    si.nMax = 1000;
+    si.nPage = 500;
+    si.fMask = SIF_ALL;
+    si.nMin = 0;
+    hOut = CreateWindowW(L"Static", L"", WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL | WS_BORDER, 150, 200, 200, 500, hWnd, NULL, NULL, NULL);
+    //SetScrollInfo(hOut, SB_VERT, &si, TRUE);
 
 }
 
 void getText(void){
-    GetWindowTextW(hSize, lSize, 255);
     GetWindowTextW(hString, lString, 255);
     GetWindowTextW(hLength, lLength, 255);
 
     wcstombs_s(NULL, sString, wcslen(lString)+1, lString, wcslen(lString)+1);
-    sSize = _wtoi(lSize);
     sLength = _wtoi(lLength);
 
     //printf("board size: %d, String: %s, word length: %d\n", sSize, sString, sLength);
