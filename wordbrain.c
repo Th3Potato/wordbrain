@@ -164,6 +164,7 @@ static void checkDuplicates(char text[]){
     strcpy(answers.answer[answers.ammount++], text);
     
     strcpy(&allWords[strlen(allWords)], text);
+    allWords[strlen(allWords)] = '\r';
     allWords[strlen(allWords)] = '\n';
     //strcpy(allWords, "ape\nape\nape\n");
     //printf("%s\n", text);
