@@ -1,2 +1,2 @@
-all: windowTest.c
-	gcc wordbrain.c trie.c windowTest.c -o wordsolver -O3
+all: wordbrain.c
+	gcc wordbrain.c trie.c -o wordsolver -O3

@@ -166,7 +166,6 @@ static void checkDuplicates(char text[]){
     strcpy(&allWords[strlen(allWords)], text);
     allWords[strlen(allWords)] = '\r';
     allWords[strlen(allWords)] = '\n';
-    //strcpy(allWords, "ape\nape\nape\n");
     //printf("%s\n", text);
 }
 
@@ -251,7 +250,7 @@ void solvePuzzle(char* myWord, int wordLength){
     makeList();
 
     resetAllVisited();
-    //printBoard();
+    printBoard();
     for(int i = 0; i < (boardSize*boardSize); ++i){
         wordPos = 1;
         branch[0] = i;
@@ -259,5 +258,17 @@ void solvePuzzle(char* myWord, int wordLength){
         getLetter(i, word);
         resetAllVisited();
     }   
+    
+}
+
+int main(void){
+    char ord[255];
+    int lengde;
+    printf("Skriv inn stringmap: \n");
+    scanf("%s", &ord);
+    printf("Skriv inn lengde på ordet: \n");
+    scanf("%d", &lengde);
+    solvePuzzle(ord, lengde);
+    printf("%s", allWords);
     
 }
